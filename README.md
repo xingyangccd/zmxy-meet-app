@@ -136,6 +136,12 @@ mvn spring-boot:run
 
 The server will start on `http://localhost:8080`
 
+## 🔗 Access URLs
+
+- **Swagger UI**: http://localhost:8081/swagger-ui.html
+- **API Docs JSON**: http://localhost:8081/v3/api-docs
+- **API Docs YAML**: http://localhost:8081/v3/api-docs.yaml
+
 ### Android Setup
 
 1. **Open Android project**
@@ -181,25 +187,56 @@ mysql -u username -p database_name < data.sql
 
 ## 📡 API Documentation
 
-### Authentication
+### 🎯 Interactive API Documentation (Swagger UI)
+
+The backend includes **Swagger/OpenAPI** for interactive API documentation.
+
+**Access Swagger UI:**
+```
+http://localhost:8081/swagger-ui.html
+```
+
+**Access OpenAPI JSON:**
+```
+http://localhost:8081/v3/api-docs
+```
+
+#### Features:
+- ✅ Interactive API testing
+- ✅ Real-time request/response examples
+- ✅ JWT authentication support
+- ✅ Automatic API endpoint discovery
+- ✅ Request/Response schema validation
+
+#### How to Use Swagger:
+1. Start the Spring Boot backend server
+2. Open browser and navigate to `http://localhost:8081/swagger-ui.html`
+3. Authorize with JWT token (click "Authorize" button)
+4. Test any API endpoint directly from the browser
+
+---
+
+### 📋 Main API Endpoints
+
+#### Authentication
 - `POST /api/auth/login` - User login
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/logout` - User logout
 
-### Posts
+#### Posts
 - `GET /api/posts` - Get all posts
 - `GET /api/posts/{id}` - Get post by ID
 - `POST /api/posts` - Create new post
 - `PUT /api/posts/{id}` - Update post
 - `DELETE /api/posts/{id}` - Delete post
 
-### Users
+#### Users
 - `GET /api/users/{id}` - Get user profile
 - `PUT /api/users/profile` - Update profile
 - `POST /api/users/{id}/follow` - Follow user
 - `DELETE /api/users/{id}/unfollow` - Unfollow user
 
-For complete API documentation, see [docs/API.md](docs/API.md)
+For complete API documentation with request/response examples, visit the **Swagger UI** interface.
 
 ## 🧪 Testing
 
@@ -246,7 +283,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Contact
 
 - Email: 3266303694@qq.com
-- Project Link: [hgit@github.com:xingyangccd/zmxy-meet-app.git]
+- Project Link: [https://github.com/xingyangccd/zmxy-meet-app](https://github.com/xingyangccd/zmxy-meet-app)
+- Swagger API Docs: [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html)
 
 ---
 
