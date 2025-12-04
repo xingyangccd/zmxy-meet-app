@@ -1,0 +1,212 @@
+# ===========================
+# Android Project
+# ===========================
+
+# Built application files
+*.apk
+*.ap_
+*.aab
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+release/
+
+# Gradle files
+.gradle/
+build/
+*/build/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Android Studio
+*.iml
+.idea/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+.idea/caches
+.idea/modules.xml
+.idea/navEditor.xml
+.DS_Store
+.externalNativeBuild
+.cxx
+captures/
+
+# IntelliJ
+*.ipr
+*.iws
+.idea_modules/
+
+# Keystore files
+*.jks
+*.keystore
+
+# External native build folder generated in Android Studio 2.2 and later
+.externalNativeBuild
+
+# Google Services (e.g. APIs or Firebase)
+google-services.json
+
+# Android NDK
+obj/
+
+# Android Profiling
+*.hprof
+
+# ===========================
+# Spring Boot Project
+# ===========================
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle (for Spring Boot)
+.gradle
+**/build/
+!src/**/build/
+
+# Spring Boot
+HELP.md
+.springBeans
+
+# STS (Spring Tool Suite)
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# IntelliJ IDEA (Spring Boot)
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
+
+# ===========================
+# Sensitive Configuration Files
+# ===========================
+
+# Application configuration with sensitive data
+**/application-dev.yml
+**/application-dev.properties
+**/application-prod.yml
+**/application-prod.properties
+**/application-local.yml
+**/application-local.properties
+
+# Database configuration
+**/database.properties
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# ===========================
+# Logs
+# ===========================
+
+*.log
+logs/
+log/
+*.log.*
+
+# ===========================
+# OS Files
+# ===========================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# ===========================
+# Temporary Files
+# ===========================
+
+*.tmp
+*.temp
+*.swp
+*.swo
+*~.nib
+*.bak
+*.cache
+
+# ===========================
+# Node.js (if using for tools)
+# ===========================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===========================
+# Database
+# ===========================
+
+*.db
+*.sqlite
+*.sqlite3
+
+# ===========================
+# Upload/Media Files (if stored locally)
+# ===========================
+
+uploads/
+media/
+temp-uploads/
+
+# ===========================
+# Documentation Build
+# ===========================
+
+docs/_build/
+site/
