@@ -22,10 +22,10 @@ fun SettingsScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("设置") },
+                title = { Text("Settings") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, "返回")
+                        Icon(Icons.Default.ArrowBack, "Back")
                     }
                 }
             )
@@ -38,14 +38,14 @@ fun SettingsScreen(navController: NavHostController) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // 退出登录按钮
+            // Logout button
             Button(
                 onClick = {
-                    // 清除登录信息
+                    // Clear login info
                     val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                     prefs.edit().clear().apply()
                     
-                    // 返回登录页
+                    // Return to login page
                     navController.navigate("login") {
                         popUpTo(0) { inclusive = true }
                     }
@@ -57,14 +57,14 @@ fun SettingsScreen(navController: NavHostController) {
                     contentColor = MaterialTheme.colorScheme.onErrorContainer
                 )
             ) {
-                Icon(Icons.Default.Logout, "退出登录")
+                Icon(Icons.Default.Logout, "Logout")
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("退出登录", fontWeight = FontWeight.Bold)
+                Text("Logout", fontWeight = FontWeight.Bold)
             }
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            // 版本信息
+            // Version info
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
@@ -74,13 +74,13 @@ fun SettingsScreen(navController: NavHostController) {
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        "版本信息",
+                        "Version Info",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        "校萌遇 v1.0.0",
+                        "Campus Social v1.0.0",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

@@ -21,6 +21,23 @@ import com.xingyang.data.api.RegisterRequest
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
+// 将中文错误消息翻译为英文
+private fun translateRegisterErrorMessage(message: String): String {
+    return when {
+        message.contains("用户名已存在") -> "Username already exists"
+        message.contains("用户名已被使用") -> "Username is already taken"
+        message.contains("邮箱已存在") || message.contains("邮箱已被使用") -> "Email already exists"
+        message.contains("邮箱格式不正确") -> "Invalid email format"
+        message.contains("密码长度不够") -> "Password is too short"
+        message.contains("密码必须") -> "Password must be at least 6 characters"
+        message.contains("注册失败") -> "Registration failed"
+        message.contains("参数错误") -> "Invalid parameters"
+        message.contains("网络错误") -> "Network error"
+        message.contains("服务器错误") -> "Server error"
+        else -> message // 如果不是中文或未匹配，返回原消息
+    }
+}
+
 @Composable
 fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
@@ -127,7 +144,8 @@ fun RegisterScreen(
                                 onRegisterSuccess()
                             } else {
                                 // Registration failed, show error message
-                                errorMessage = result.message ?: "Registration failed"
+                                val originalMsg = result.message ?: "Registration failed"
+                                errorMessage = translateRegisterErrorMessage(originalMsg)
                             }
                         } catch (e: Exception) {
                             e.printStackTrace()

@@ -61,6 +61,9 @@ interface ApiService {
     @POST("api/comments/{id}/reply")
     suspend fun replyToComment(@Path("id") commentId: Long, @Body request: AddCommentRequest): Result<Comment>
     
+    @DELETE("api/comments/{id}")
+    suspend fun deleteComment(@Path("id") commentId: Long): Result<Void>
+    
     // User & Follow
     @GET("api/users/{id}")
     suspend fun getUserById(@Path("id") userId: Long): Result<User>

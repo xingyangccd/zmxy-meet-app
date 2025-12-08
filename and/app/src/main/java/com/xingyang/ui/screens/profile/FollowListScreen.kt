@@ -47,10 +47,10 @@ fun FollowingListScreen(userId: Long, navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("关注列表") },
+                title = { Text("Following") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, "返回")
+                        Icon(Icons.Default.ArrowBack, "Back")
                     }
                 }
             )
@@ -83,7 +83,7 @@ fun FollowingListScreen(userId: Long, navController: NavHostController) {
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        "暂无关注",
+                        "No following yet",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -136,10 +136,10 @@ fun FollowersListScreen(userId: Long, navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("粉丝列表") },
+                title = { Text("Followers") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, "返回")
+                        Icon(Icons.Default.ArrowBack, "Back")
                     }
                 }
             )
@@ -172,7 +172,7 @@ fun FollowersListScreen(userId: Long, navController: NavHostController) {
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        "暂无粉丝",
+                        "No followers yet",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

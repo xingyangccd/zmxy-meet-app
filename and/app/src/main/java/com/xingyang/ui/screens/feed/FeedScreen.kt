@@ -962,7 +962,7 @@ fun CommentDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("取消")
+                Text("Cancel")
             }
         }
     )

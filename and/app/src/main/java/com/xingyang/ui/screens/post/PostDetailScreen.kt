@@ -48,8 +48,11 @@ fun PostDetailScreen(
     var post by remember { mutableStateOf<Post?>(null) }
     var comments by remember { mutableStateOf<List<Comment>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
+    var isSending by remember { mutableStateOf(false) }
     var commentText by remember { mutableStateOf("") }
     var replyToComment by remember { mutableStateOf<Comment?>(null) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var commentToDelete by remember { mutableStateOf<Comment?>(null) }
     
     // Load post and comments
     LaunchedEffect(postId) {
@@ -106,7 +109,8 @@ fun PostDetailScreen(
                                 onValueChange = { commentText = it },
                                 modifier = Modifier.fillMaxWidth(),
                                 placeholder = { Text("Write your reply...") },
-                                maxLines = 3
+                                maxLines = 3,
+                                enabled = !isSending
                             )
                         }
                         IconButton(onClick = { 
@@ -121,14 +125,16 @@ fun PostDetailScreen(
                             onValueChange = { commentText = it },
                             modifier = Modifier.weight(1f),
                             placeholder = { Text("Write your comment...") },
-                            maxLines = 3
+                            maxLines = 3,
+                            enabled = !isSending
                         )
                     }
                     
                     IconButton(
                         onClick = {
-                            if (commentText.isNotBlank()) {
+                            if (commentText.isNotBlank() && !isSending) {
                                 scope.launch {
+                                    isSending = true
                                     try {
                                         val request = AddCommentRequest(commentText)
                                         val result = if (replyToComment != null) {
@@ -152,16 +158,27 @@ fun PostDetailScreen(
                                             commentText = ""
                                             replyToComment = null
                                             android.widget.Toast.makeText(context, "Comment posted successfully", android.widget.Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            android.widget.Toast.makeText(context, "Comment failed: ${result.message}", android.widget.Toast.LENGTH_SHORT).show()
                                         }
                                     } catch (e: Exception) {
                                         android.widget.Toast.makeText(context, "Comment failed: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+                                    } finally {
+                                        isSending = false
                                     }
                                 }
                             }
                         },
-                        enabled = commentText.isNotBlank()
+                        enabled = commentText.isNotBlank() && !isSending
                     ) {
-                        Icon(Icons.Default.Send, "Send")
+                        if (isSending) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Icon(Icons.Default.Send, "Send")
+                        }
                     }
                 }
             }
@@ -218,6 +235,7 @@ fun PostDetailScreen(
                     CommentItem(
                         comment = comment,
                         onReply = { replyToComment = it },
+                        onDelete = { commentToDelete = it; showDeleteDialog = true },
                         onUserClick = { userId ->
                             navController.navigate("user_profile/$userId")
                         },
@@ -236,6 +254,54 @@ fun PostDetailScreen(
                 }
             }
         }
+    }
+    
+    // 删除评论确认对话框
+    if (showDeleteDialog && commentToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Delete Comment") },
+            text = { Text("Are you sure you want to delete this comment?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch {
+                            try {
+                                val result = apiService.deleteComment(commentToDelete!!.id)
+                                if (result.code == 200) {
+                                    // 重新加载评论列表
+                                    val commentsResult = apiService.getPostComments(postId)
+                                    if (commentsResult.code == 200 && commentsResult.data != null) {
+                                        comments = commentsResult.data
+                                    }
+                                    // 重新加载帖子信息（更新评论数）
+                                    val postResult = apiService.getPostDetail(postId)
+                                    if (postResult.code == 200 && postResult.data != null) {
+                                        post = postResult.data
+                                    }
+                                    android.widget.Toast.makeText(context, "Comment deleted", android.widget.Toast.LENGTH_SHORT).show()
+                                } else {
+                                    android.widget.Toast.makeText(context, "Delete failed: ${result.message}", android.widget.Toast.LENGTH_SHORT).show()
+                                }
+                            } catch (e: Exception) {
+                                android.widget.Toast.makeText(context, "Delete failed: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        showDeleteDialog = false
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
 
@@ -370,11 +436,16 @@ fun PostDetailContent(
 fun CommentItem(
     comment: Comment,
     onReply: (Comment) -> Unit,
+    onDelete: (Comment) -> Unit,
     onUserClick: (Long) -> Unit,
     context: Context,
-    isReply: Boolean = false
+    isReply: Boolean = false,
+    parentComment: Comment? = null
 ) {
     var isExpanded by remember { mutableStateOf(false) }
+    val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    val currentUserId = prefs.getString("user_id", null)?.toLongOrNull()
+    val isOwnComment = currentUserId == comment.userId
     
     Column(
         modifier = Modifier
@@ -424,7 +495,7 @@ fun CommentItem(
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                // Time and reply button
+                // Time, reply and delete button
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -436,11 +507,33 @@ fun CommentItem(
                     
                     Spacer(modifier = Modifier.width(16.dp))
                     
+                    // 回复按钮 - 如果是二级回复，回复到顶级评论
                     TextButton(
-                        onClick = { onReply(comment) },
+                        onClick = { 
+                            if (isReply && parentComment != null) {
+                                // 如果是回复的回复，回复到顶级评论
+                                onReply(parentComment)
+                            } else {
+                                onReply(comment)
+                            }
+                        },
                         contentPadding = PaddingValues(0.dp)
                     ) {
                         Text("Reply", fontSize = 12.sp)
+                    }
+                    
+                    // 删除按钮 - 只对自己的评论显示
+                    if (isOwnComment) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        TextButton(
+                            onClick = { onDelete(comment) },
+                            contentPadding = PaddingValues(0.dp),
+                            colors = ButtonDefaults.textButtonColors(
+                                contentColor = MaterialTheme.colorScheme.error
+                            )
+                        ) {
+                            Text("Delete", fontSize = 12.sp)
+                        }
                     }
                     
                     if (!isReply && comment.replyCount > 0) {
@@ -472,9 +565,11 @@ fun CommentItem(
                             CommentItem(
                                 comment = reply,
                                 onReply = onReply,
+                                onDelete = onDelete,
                                 onUserClick = onUserClick,
                                 context = context,
-                                isReply = true
+                                isReply = true,
+                                parentComment = comment
                             )
                         }
                     }
@@ -513,11 +608,11 @@ fun PostImages(mediaUrls: String) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
-                    .clip(RoundedCornerShape(12.dp))
                     .clickable {
                         previewImageUrl = imageUrls[0]
                         showImagePreview = true
-                    },
+                    }
+                    .clip(RoundedCornerShape(12.dp)),
                 contentScale = ContentScale.Crop
             )
         }
@@ -534,11 +629,11 @@ fun PostImages(mediaUrls: String) {
                         modifier = Modifier
                             .weight(1f)
                             .height(180.dp)
-                            .clip(RoundedCornerShape(12.dp))
                             .clickable {
                                 previewImageUrl = url
                                 showImagePreview = true
-                            },
+                            }
+                            .clip(RoundedCornerShape(12.dp)),
                         contentScale = ContentScale.Crop
                     )
                 }
@@ -555,11 +650,11 @@ fun PostImages(mediaUrls: String) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
-                        .clip(RoundedCornerShape(12.dp))
                         .clickable {
                             previewImageUrl = imageUrls[0]
                             showImagePreview = true
-                        },
+                        }
+                        .clip(RoundedCornerShape(12.dp)),
                     contentScale = ContentScale.Crop
                 )
                 Row(
@@ -573,11 +668,11 @@ fun PostImages(mediaUrls: String) {
                             modifier = Modifier
                                 .weight(1f)
                                 .height(140.dp)
-                                .clip(RoundedCornerShape(12.dp))
                                 .clickable {
                                     previewImageUrl = url
                                     showImagePreview = true
-                                },
+                                }
+                                .clip(RoundedCornerShape(12.dp)),
                             contentScale = ContentScale.Crop
                         )
                     }
@@ -601,11 +696,11 @@ fun PostImages(mediaUrls: String) {
                                 modifier = Modifier
                                     .weight(1f)
                                     .height(150.dp)
-                                    .clip(RoundedCornerShape(12.dp))
                                     .clickable {
                                         previewImageUrl = url
                                         showImagePreview = true
-                                    },
+                                    }
+                                    .clip(RoundedCornerShape(12.dp)),
                                 contentScale = ContentScale.Crop
                             )
                         }
@@ -621,11 +716,11 @@ fun PostImages(mediaUrls: String) {
                                 modifier = Modifier
                                     .weight(1f)
                                     .height(150.dp)
-                                    .clip(RoundedCornerShape(12.dp))
                                     .clickable {
                                         previewImageUrl = url
                                         showImagePreview = true
-                                    },
+                                    }
+                                    .clip(RoundedCornerShape(12.dp)),
                                 contentScale = ContentScale.Crop
                             )
                         }
@@ -643,11 +738,11 @@ fun PostImages(mediaUrls: String) {
                             modifier = Modifier
                                 .width(250.dp)
                                 .height(250.dp)
-                                .clip(RoundedCornerShape(12.dp))
                                 .clickable {
                                     previewImageUrl = url
                                     showImagePreview = true
-                                },
+                                }
+                                .clip(RoundedCornerShape(12.dp)),
                             contentScale = ContentScale.Crop
                         )
                     }

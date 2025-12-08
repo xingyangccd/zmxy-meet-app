@@ -292,6 +292,22 @@ fun LoginScreen(
     }
 }
 
+// 将中文错误消息翻译为英文
+private fun translateErrorMessage(message: String): String {
+    return when {
+        message.contains("密码错误") || message.contains("密码不正确") -> "Incorrect password"
+        message.contains("用户不存在") || message.contains("用户名不存在") -> "User does not exist"
+        message.contains("账号不存在") -> "Account does not exist"
+        message.contains("账号已被禁用") -> "Account has been disabled"
+        message.contains("用户名或密码错误") -> "Invalid username or password"
+        message.contains("登录失败") -> "Login failed"
+        message.contains("网络错误") -> "Network error"
+        message.contains("服务器错误") -> "Server error"
+        message.contains("参数错误") -> "Invalid parameters"
+        else -> message // 如果不是中文或未匹配，返回原消息
+    }
+}
+
 private suspend fun performLogin(
     context: Context,
     apiService: ApiService,
@@ -327,11 +343,18 @@ private suspend fun performLogin(
             editor.commit() // Use commit() for immediate synchronous save
             
             android.util.Log.d("LoginScreen", "User info saved")
+            // 显示登录成功提示
+            android.widget.Toast.makeText(
+                context,
+                "Login successful!",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
             onSuccess()
         } else {
             // Business logic failed
-            val errorMsg = result.message ?: "Login failed"
-            android.util.Log.e("LoginScreen", "Login failed: $errorMsg")
+            val originalMsg = result.message ?: "Login failed"
+            val errorMsg = translateErrorMessage(originalMsg)
+            android.util.Log.e("LoginScreen", "Login failed: $originalMsg -> $errorMsg")
             onError(errorMsg)
         }
     } catch (e: retrofit2.HttpException) {
