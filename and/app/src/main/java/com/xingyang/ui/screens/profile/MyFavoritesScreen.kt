@@ -17,10 +17,10 @@ fun MyFavoritesScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("我的收藏") },
+                title = { Text("My Favorites") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, "返回")
+                        Icon(Icons.Default.ArrowBack, "Back")
                     }
                 }
             )
@@ -43,12 +43,12 @@ fun MyFavoritesScreen(navController: NavHostController) {
                     tint = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    "还没有收藏内容",
+                    "No favorites yet",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    "收藏喜欢的内容会显示在这里",
+                    "Your favorite posts will appear here",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

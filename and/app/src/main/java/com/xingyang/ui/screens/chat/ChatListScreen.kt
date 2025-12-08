@@ -285,6 +285,7 @@ fun ChatDetailScreen(otherUserId: Long, navController: NavHostController) {
     val context = LocalContext.current
     val apiService: ApiService = koinInject()
     val scope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
     
     var messages by remember { mutableStateOf<List<com.xingyang.data.api.ChatMessage>>(emptyList()) }
     var messageInput by remember { mutableStateOf("") }
@@ -337,15 +338,22 @@ fun ChatDetailScreen(otherUserId: Long, navController: NavHostController) {
         ) {
             // Message list
             LazyColumn(
+                state = listState,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
                 contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                reverseLayout = true
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(messages.reversed()) { message ->
+                items(messages) { message ->
                     ChatMessageItem(message = message, currentUserId = getCurrentUserId(context))
+                }
+            }
+            
+            // 自动滚动到最新消息
+            LaunchedEffect(messages.size) {
+                if (messages.isNotEmpty()) {
+                    listState.animateScrollToItem(messages.size - 1)
                 }
             }
             

@@ -20,10 +20,10 @@ fun AboutScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("关于我们") },
+                title = { Text("About Us") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, "返回")
+                        Icon(Icons.Default.ArrowBack, "Back")
                     }
                 }
             )
@@ -47,13 +47,13 @@ fun AboutScreen(navController: NavHostController) {
             )
             
             Text(
-                "校萌遇",
+                "Campus Social",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold
             )
             
             Text(
-                "版本 1.0.0",
+                "Version 1.0.0",
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             
@@ -68,12 +68,12 @@ fun AboutScreen(navController: NavHostController) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        "关于校萌遇",
+                        "About Campus Social",
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
                     )
                     Text(
-                        "校萌遇是一款专为校园用户打造的社交应用，帮助你发现身边的有趣灵魂，记录校园生活的点点滴滴。",
+                        "Campus Social is a social app designed for campus users, helping you discover interesting people around you and record every moment of campus life.",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 22.sp
                     )
@@ -83,7 +83,7 @@ fun AboutScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.weight(1f))
             
             Text(
-                "© 2025 校萌遇 All Rights Reserved",
+                "© 2025 Campus Social. All Rights Reserved",
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
