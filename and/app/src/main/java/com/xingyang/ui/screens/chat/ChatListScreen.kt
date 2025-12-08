@@ -6,20 +6,28 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.xingyang.data.api.ApiService
 import com.xingyang.data.api.Conversation
 import kotlinx.coroutines.launch
@@ -424,6 +432,9 @@ fun ChatDetailScreen(otherUserId: Long, navController: NavHostController) {
 @Composable
 fun ChatMessageItem(message: com.xingyang.data.api.ChatMessage, currentUserId: Long) {
     val isMe = message.senderId == currentUserId
+    var showMediaPreview by remember { mutableStateOf(false) }
+    var previewMediaUrl by remember { mutableStateOf<String?>(null) }
+    var previewMediaType by remember { mutableStateOf<String?>(null) }
     
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -441,10 +452,89 @@ fun ChatMessageItem(message: com.xingyang.data.api.ChatMessage, currentUserId: L
             Column(
                 modifier = Modifier.padding(12.dp)
             ) {
-                Text(
-                    text = message.content,
-                    fontSize = 15.sp
-                )
+                // 根据消息类型显示不同内容
+                when (message.type) {
+                    "image" -> {
+                        // 显示图片
+                        message.mediaUrls?.let { url ->
+                            AsyncImage(
+                                model = url,
+                                contentDescription = "Image",
+                                modifier = Modifier
+                                    .heightIn(max = 200.dp)
+                                    .widthIn(max = 250.dp)
+                                    .clickable {
+                                        previewMediaUrl = url
+                                        previewMediaType = "image"
+                                        showMediaPreview = true
+                                    }
+                                    .clip(RoundedCornerShape(8.dp)),
+                                contentScale = ContentScale.Fit
+                            )
+                        }
+                        if (message.content.isNotBlank()) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = message.content,
+                                fontSize = 15.sp
+                            )
+                        }
+                    }
+                    "video" -> {
+                        // 显示视频缩略图
+                        message.mediaUrls?.let { url ->
+                            Box(
+                                modifier = Modifier
+                                    .heightIn(max = 200.dp)
+                                    .widthIn(max = 250.dp)
+                                    .clickable {
+                                        previewMediaUrl = url
+                                        previewMediaType = "video"
+                                        showMediaPreview = true
+                                    }
+                                    .clip(RoundedCornerShape(8.dp))
+                            ) {
+                                AsyncImage(
+                                    model = url,
+                                    contentDescription = "Video",
+                                    modifier = Modifier.matchParentSize(),
+                                    contentScale = ContentScale.Fit
+                                )
+                                // 播放按钮图标
+                                Surface(
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+                                        .size(48.dp),
+                                    shape = CircleShape,
+                                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
+                                ) {
+                                    Icon(
+                                        Icons.Default.PlayArrow,
+                                        contentDescription = "Play",
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(8.dp),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                        }
+                        if (message.content.isNotBlank()) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = message.content,
+                                fontSize = 15.sp
+                            )
+                        }
+                    }
+                    else -> {
+                        // 默认显示文本
+                        Text(
+                            text = message.content,
+                            fontSize = 15.sp
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = formatMessageTime(message.createTime),
@@ -453,6 +543,15 @@ fun ChatMessageItem(message: com.xingyang.data.api.ChatMessage, currentUserId: L
                 )
             }
         }
+    }
+    
+    // 媒体预览对话框
+    if (showMediaPreview && previewMediaUrl != null) {
+        MediaPreviewDialog(
+            mediaUrl = previewMediaUrl!!,
+            mediaType = previewMediaType ?: "image",
+            onDismiss = { showMediaPreview = false }
+        )
     }
 }
 
@@ -469,4 +568,87 @@ private fun formatMessageTime(time: String): String {
 private fun formatTime(time: String): String {
     // TODO: Implement time formatting (just now, minutes ago, hours ago, etc.)
     return time.take(10) // Simple handling, only show date part
+}
+
+@Composable
+fun MediaPreviewDialog(
+    mediaUrl: String,
+    mediaType: String,
+    onDismiss: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable { onDismiss() }
+        ) {
+            // 显示媒体内容
+            when (mediaType) {
+                "image" -> {
+                    AsyncImage(
+                        model = mediaUrl,
+                        contentDescription = "Preview",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                }
+                "video" -> {
+                    // 视频预览（简化版，实际应用中可能需要使用 ExoPlayer）
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AsyncImage(
+                            model = mediaUrl,
+                            contentDescription = "Video Preview",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Fit
+                        )
+                        Surface(
+                            modifier = Modifier.size(80.dp),
+                            shape = CircleShape,
+                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
+                        ) {
+                            Icon(
+                                Icons.Default.PlayArrow,
+                                contentDescription = "Play",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                }
+            }
+            
+            // 关闭按钮
+            IconButton(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
+            ) {
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = "Close",
+                        modifier = Modifier.padding(8.dp),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        }
+    }
 }

@@ -8,19 +8,21 @@ spring:
   # 数据源配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/zmxy_meet?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://103.121.92.89:3306/zmxy_meet?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: xy666666
+    password: ZMXYxingyang123
   
   # Redis 配置
   data:
     redis:
-      host: localhost
+      host: 103.121.92.89
       port: 6379
-      password:
+      password: xy666666
       database: 0
-      timeout: 5000ms
+      timeout: 5000
+      client-type: lettuce
       lettuce:
+        shutdown-timeout: 100ms
         pool:
           max-active: 8
           max-idle: 8
@@ -48,7 +50,7 @@ jwt:
 
 # MinIO 配置
 minio:
-  endpoint: http://localhost:9000
+  endpoint: http://103.121.92.89:9000
   access-key: minioadmin
   secret-key: minioadmin
   bucket-name: zmxy-meet

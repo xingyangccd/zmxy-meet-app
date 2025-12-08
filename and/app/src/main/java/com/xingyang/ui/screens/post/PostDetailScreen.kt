@@ -1,7 +1,6 @@
 package com.xingyang.ui.screens.post
 
 import android.content.Context
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,8 +21,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.xingyang.data.api.ApiService
@@ -490,6 +491,9 @@ fun CommentItem(
 
 @Composable
 fun PostImages(mediaUrls: String) {
+    var showImagePreview by remember { mutableStateOf(false) }
+    var previewImageUrl by remember { mutableStateOf<String?>(null) }
+    
     // Parse JSON array
     val imageUrls = try {
         val type = object : TypeToken<List<String>>() {}.type
@@ -503,13 +507,17 @@ fun PostImages(mediaUrls: String) {
     when (imageUrls.size) {
         1 -> {
             // Single image - large display
-            Image(
-                painter = rememberAsyncImagePainter(imageUrls[0]),
+            AsyncImage(
+                model = imageUrls[0],
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
-                    .clip(RoundedCornerShape(12.dp)),
+                    .clip(RoundedCornerShape(12.dp))
+                    .clickable {
+                        previewImageUrl = imageUrls[0]
+                        showImagePreview = true
+                    },
                 contentScale = ContentScale.Crop
             )
         }
@@ -520,13 +528,17 @@ fun PostImages(mediaUrls: String) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 imageUrls.forEach { url ->
-                    Image(
-                        painter = rememberAsyncImagePainter(url),
+                    AsyncImage(
+                        model = url,
                         contentDescription = null,
                         modifier = Modifier
                             .weight(1f)
                             .height(180.dp)
-                            .clip(RoundedCornerShape(12.dp)),
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable {
+                                previewImageUrl = url
+                                showImagePreview = true
+                            },
                         contentScale = ContentScale.Crop
                     )
                 }
@@ -537,13 +549,17 @@ fun PostImages(mediaUrls: String) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Image(
-                    painter = rememberAsyncImagePainter(imageUrls[0]),
+                AsyncImage(
+                    model = imageUrls[0],
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
-                        .clip(RoundedCornerShape(12.dp)),
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable {
+                            previewImageUrl = imageUrls[0]
+                            showImagePreview = true
+                        },
                     contentScale = ContentScale.Crop
                 )
                 Row(
@@ -551,13 +567,17 @@ fun PostImages(mediaUrls: String) {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     imageUrls.drop(1).forEach { url ->
-                        Image(
-                            painter = rememberAsyncImagePainter(url),
+                        AsyncImage(
+                            model = url,
                             contentDescription = null,
                             modifier = Modifier
                                 .weight(1f)
                                 .height(140.dp)
-                                .clip(RoundedCornerShape(12.dp)),
+                                .clip(RoundedCornerShape(12.dp))
+                                .clickable {
+                                    previewImageUrl = url
+                                    showImagePreview = true
+                                },
                             contentScale = ContentScale.Crop
                         )
                     }
@@ -575,13 +595,17 @@ fun PostImages(mediaUrls: String) {
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         imageUrls.take(2).forEach { url ->
-                            Image(
-                                painter = rememberAsyncImagePainter(url),
+                            AsyncImage(
+                                model = url,
                                 contentDescription = null,
                                 modifier = Modifier
                                     .weight(1f)
                                     .height(150.dp)
-                                    .clip(RoundedCornerShape(12.dp)),
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .clickable {
+                                        previewImageUrl = url
+                                        showImagePreview = true
+                                    },
                                 contentScale = ContentScale.Crop
                             )
                         }
@@ -591,13 +615,17 @@ fun PostImages(mediaUrls: String) {
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         imageUrls.drop(2).take(2).forEach { url ->
-                            Image(
-                                painter = rememberAsyncImagePainter(url),
+                            AsyncImage(
+                                model = url,
                                 contentDescription = null,
                                 modifier = Modifier
                                     .weight(1f)
                                     .height(150.dp)
-                                    .clip(RoundedCornerShape(12.dp)),
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .clickable {
+                                        previewImageUrl = url
+                                        showImagePreview = true
+                                    },
                                 contentScale = ContentScale.Crop
                             )
                         }
@@ -609,16 +637,77 @@ fun PostImages(mediaUrls: String) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(imageUrls) { url ->
-                        Image(
-                            painter = rememberAsyncImagePainter(url),
+                        AsyncImage(
+                            model = url,
                             contentDescription = null,
                             modifier = Modifier
                                 .width(250.dp)
                                 .height(250.dp)
-                                .clip(RoundedCornerShape(12.dp)),
+                                .clip(RoundedCornerShape(12.dp))
+                                .clickable {
+                                    previewImageUrl = url
+                                    showImagePreview = true
+                                },
                             contentScale = ContentScale.Crop
                         )
                     }
+                }
+            }
+        }
+    }
+    
+    // 图片预览对话框
+    if (showImagePreview && previewImageUrl != null) {
+        ImagePreviewDialog(
+            imageUrl = previewImageUrl!!,
+            onDismiss = { showImagePreview = false }
+        )
+    }
+}
+
+@Composable
+fun ImagePreviewDialog(
+    imageUrl: String,
+    onDismiss: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable { onDismiss() }
+        ) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = "Preview",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                contentScale = ContentScale.Fit
+            )
+            
+            // 关闭按钮
+            IconButton(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
+            ) {
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = "Close",
+                        modifier = Modifier.padding(8.dp),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
                 }
             }
         }
