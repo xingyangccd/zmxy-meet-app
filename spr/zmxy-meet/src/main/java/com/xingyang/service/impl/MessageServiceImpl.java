@@ -28,7 +28,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
         wrapper.and(w -> w
             .and(w1 -> w1.eq(Message::getSenderId, userId1).eq(Message::getReceiverId, userId2))
             .or(w2 -> w2.eq(Message::getSenderId, userId2).eq(Message::getReceiverId, userId1))
-        ).orderByDesc(Message::getCreateTime);
+        ).orderByAsc(Message::getCreateTime);  // 改为升序，最早的消息在前
         
         Page<Message> pageResult = page(new Page<>(page, size), wrapper);
         return pageResult.getRecords();

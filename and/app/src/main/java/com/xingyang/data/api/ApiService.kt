@@ -88,6 +88,12 @@ interface ApiService {
     
     @GET("api/users/{id}/followers")
     suspend fun getFollowersList(@Path("id") userId: Long): Result<List<User>>
+    
+    @GET("api/users/{id}/liked-posts")
+    suspend fun getUserLikedPosts(@Path("id") userId: Long): Result<List<Post>>
+    
+    @GET("api/users/{id}/browse-history")
+    suspend fun getUserBrowseHistory(@Path("id") userId: Long): Result<List<Post>>
 
     // Circles
     @GET("api/circles")

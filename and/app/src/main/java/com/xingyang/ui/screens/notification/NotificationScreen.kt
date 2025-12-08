@@ -24,18 +24,22 @@ import org.koin.compose.koinInject
 
 // 将中文通知内容翻译为英文
 private fun translateNotificationContent(content: String): String {
-    return when {
-        content.contains("关注了你") -> content.replace("关注了你", "followed you")
-        content.contains("点赞了你的帖子") -> content.replace("点赞了你的帖子", "liked your post")
-        content.contains("点赞了你的动态") -> content.replace("点赞了你的动态", "liked your post")
-        content.contains("评论了你的帖子") -> content.replace("评论了你的帖子", "commented on your post")
-        content.contains("评论了你的动态") -> content.replace("评论了你的动态", "commented on your post")
-        content.contains("回复了你的评论") -> content.replace("回复了你的评论", "replied to your comment")
-        content.contains("提到了你") -> content.replace("提到了你", "mentioned you")
-        content.contains("分享了你的帖子") -> content.replace("分享了你的帖子", "shared your post")
-        content.contains("有人") -> content.replace("有人", "Someone")
-        else -> content
-    }
+    var result = content
+    
+    // 替换具体的动作短语
+    result = result.replace("关注了你", "followed you")
+    result = result.replace("点赞了你的帖子", "liked your post")
+    result = result.replace("点赞了你的动态", "liked your post")
+    result = result.replace("评论了你的帖子", "commented on your post")
+    result = result.replace("评论了你的动态", "commented on your post")
+    result = result.replace("回复了你的评论", "replied to your comment")
+    result = result.replace("提到了你", "mentioned you")
+    result = result.replace("分享了你的帖子", "shared your post")
+    
+    // 最后替换"有人"
+    result = result.replace("有人", "Someone")
+    
+    return result
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

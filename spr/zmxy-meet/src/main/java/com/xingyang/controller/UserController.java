@@ -202,4 +202,34 @@ public class UserController {
             return Result.error("获取粉丝列表失败: " + e.getMessage());
         }
     }
+    
+    /**
+     * 获取用户点赞的帖子列表
+     */
+    @GetMapping("/{id}/liked-posts")
+    public Result<List<Post>> getUserLikedPosts(@PathVariable Long id) {
+        try {
+            List<Post> likedPosts = postService.getUserLikedPosts(id);
+            return Result.success(likedPosts);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error("获取点赞列表失败: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * 获取用户浏览历史
+     * TODO: 需要实现浏览记录功能
+     */
+    @GetMapping("/{id}/browse-history")
+    public Result<List<Post>> getUserBrowseHistory(@PathVariable Long id) {
+        try {
+            // 暂时返回空列表，待实现浏览记录功能
+            // 可以通过在PostController的getPost方法中记录浏览历史
+            return Result.success(List.of());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error("获取浏览历史失败: " + e.getMessage());
+        }
+    }
 }

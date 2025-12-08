@@ -43,7 +43,7 @@ fun DiscoveryScreen(navController: NavHostController) {
     var selectedTab by remember { mutableStateOf(0) }
     var isSearching by remember { mutableStateOf(false) }
     
-    val tabs = listOf("热门", "最新", "关注")
+    val tabs = listOf("Hot", "Latest", "Following")
     
     // 搜索逻辑
     LaunchedEffect(searchQuery) {
@@ -75,7 +75,7 @@ fun DiscoveryScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("发现") },
+                title = { Text("Discover") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
@@ -94,7 +94,7 @@ fun DiscoveryScreen(navController: NavHostController) {
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("搜索用户、圈子、话题...") },
+                placeholder = { Text("Search users, circles, topics...") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 singleLine = true
             )

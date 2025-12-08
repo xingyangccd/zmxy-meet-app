@@ -134,4 +134,50 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         String key = "post:like:" + postId + ":" + userId;
         return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
+    
+    @Override
+    public List<Post> getUserLikedPosts(Long userId) {
+        // 从Redis中获取用户点赞的所有帖子ID
+        String pattern = "post:like:*:" + userId;
+        var keys = redisTemplate.keys(pattern);
+        
+        if (keys == null || keys.isEmpty()) {
+            return List.of();
+        }
+        
+        // 提取帖子ID
+        List<Long> postIds = keys.stream()
+                .map(key -> {
+                    String keyStr = key.toString();
+                    // key格式: post:like:{postId}:{userId}
+                    String[] parts = keyStr.split(":");
+                    if (parts.length >= 3) {
+                        return Long.parseLong(parts[2]);
+                    }
+                    return null;
+                })
+                .filter(id -> id != null)
+                .toList();
+        
+        if (postIds.isEmpty()) {
+            return List.of();
+        }
+        
+        // 批量查询帖子
+        List<Post> posts = listByIds(postIds);
+        
+        // 更新评论数
+        updateRealCommentsCount(posts);
+        
+        // 按点赞时间排序（最新点赞的在前）
+        posts.sort((p1, p2) -> {
+            // 由于Redis没有存储点赞时间，这里按帖子创建时间降序排列
+            if (p1.getCreateTime() == null || p2.getCreateTime() == null) {
+                return 0;
+            }
+            return p2.getCreateTime().compareTo(p1.getCreateTime());
+        });
+        
+        return posts;
+    }
 }

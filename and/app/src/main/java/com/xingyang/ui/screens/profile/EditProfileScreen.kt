@@ -37,25 +37,25 @@ fun EditProfileScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("编辑资料") },
+                title = { Text("Edit Profile") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, "返回")
+                        Icon(Icons.Default.ArrowBack, "Back")
                     }
                 },
                 actions = {
                     TextButton(
                         onClick = {
-                            // 保存资料
+                            // Save profile
                             prefs.edit()
                                 .putString("nickname", nickname)
                                 .putString("location", location)
                                 .apply()
-                            android.widget.Toast.makeText(context, "保存成功", android.widget.Toast.LENGTH_SHORT).show()
+                            android.widget.Toast.makeText(context, "Saved successfully", android.widget.Toast.LENGTH_SHORT).show()
                             navController.popBackStack()
                         }
                     ) {
-                        Text("保存")
+                        Text("Save")
                     }
                 }
             )
@@ -71,7 +71,7 @@ fun EditProfileScreen(navController: NavHostController) {
             OutlinedTextField(
                 value = nickname,
                 onValueChange = { nickname = it },
-                label = { Text("昵称") },
+                label = { Text("Nickname") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
             )
@@ -79,7 +79,7 @@ fun EditProfileScreen(navController: NavHostController) {
             OutlinedTextField(
                 value = bio,
                 onValueChange = { bio = it },
-                label = { Text("个人简介") },
+                label = { Text("Bio") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 minLines = 3,
@@ -89,7 +89,7 @@ fun EditProfileScreen(navController: NavHostController) {
             OutlinedTextField(
                 value = location,
                 onValueChange = { },
-                label = { Text("所在地") },
+                label = { Text("Location") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { showLocationPicker = true },

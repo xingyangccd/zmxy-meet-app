@@ -10,4 +10,5 @@ public interface PostService extends IService<Post> {
     void likePost(Long postId, Long userId);
     void unlikePost(Long postId, Long userId);
     boolean isLiked(Long postId, Long userId);
+    List<Post> getUserLikedPosts(Long userId);
 }
