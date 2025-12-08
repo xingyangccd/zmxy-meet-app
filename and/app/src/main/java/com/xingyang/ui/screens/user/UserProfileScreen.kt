@@ -76,7 +76,7 @@ fun UserProfileScreen(
                 }
             }
         } catch (e: Exception) {
-            android.util.Log.e("UserProfile", "加载失败: ${e.message}")
+            android.util.Log.e("UserProfile", "Load failed: ${e.message}")
         } finally {
             isLoading = false
         }
@@ -85,17 +85,17 @@ fun UserProfileScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(user?.username ?: "用户主页") },
+                title = { Text(user?.username ?: "User Profile") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, "返回")
+                        Icon(Icons.Default.ArrowBack, "Back")
                     }
                 },
                 actions = {
                     IconButton(onClick = { 
-                        android.widget.Toast.makeText(context, "功能开发中", android.widget.Toast.LENGTH_SHORT).show()
+                        android.widget.Toast.makeText(context, "Coming soon", android.widget.Toast.LENGTH_SHORT).show()
                     }) {
-                        Icon(Icons.Default.MoreVert, "更多")
+                        Icon(Icons.Default.MoreVert, "More")
                     }
                 }
             )
@@ -117,7 +117,7 @@ fun UserProfileScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                Text("用户不存在")
+                Text("User not found")
             }
         } else {
             LazyColumn(
@@ -149,7 +149,7 @@ fun UserProfileScreen(
                                             isFollowing = !isFollowing
                                             android.widget.Toast.makeText(
                                                 context,
-                                                if (isFollowing) "关注成功" else "已取消关注",
+                                                if (isFollowing) "Followed" else "Unfollowed",
                                                 android.widget.Toast.LENGTH_SHORT
                                             ).show()
                                             
@@ -162,7 +162,7 @@ fun UserProfileScreen(
                                     } catch (e: Exception) {
                                         android.widget.Toast.makeText(
                                             context,
-                                            "操作失败: ${e.message}",
+                                            "Operation failed: ${e.message}",
                                             android.widget.Toast.LENGTH_SHORT
                                         ).show()
                                     } finally {
@@ -181,7 +181,7 @@ fun UserProfileScreen(
                 // TA的动态标题
                 item {
                     Text(
-                        text = if (isOwnProfile) "我的动态" else "TA的动态",
+                        text = if (isOwnProfile) "My Posts" else "Posts",
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
@@ -197,7 +197,7 @@ fun UserProfileScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = if (isOwnProfile) "还没有发布动态" else "TA还没有发布动态",
+                                text = if (isOwnProfile) "No posts yet" else "No posts yet",
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -296,9 +296,9 @@ fun UserInfoCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    StatItem(label = "动态", count = userStats.postsCount)
-                    StatItem(label = "粉丝", count = userStats.followersCount)
-                    StatItem(label = "关注", count = userStats.followingCount)
+                    StatItem(label = "Posts", count = userStats.postsCount)
+                    StatItem(label = "Followers", count = userStats.followersCount)
+                    StatItem(label = "Following", count = userStats.followingCount)
                 }
             }
             
@@ -308,13 +308,13 @@ fun UserInfoCard(
             if (isOwnProfile) {
                 OutlinedButton(
                     onClick = {
-                        android.widget.Toast.makeText(context, "编辑资料功能开发中", android.widget.Toast.LENGTH_SHORT).show()
+                        android.widget.Toast.makeText(context, "Coming soon", android.widget.Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("编辑资料")
+                    Text("Edit Profile")
                 }
             } else {
                 Row(
@@ -336,7 +336,7 @@ fun UserInfoCard(
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(if (isFollowing) "已关注" else "关注")
+                        Text(if (isFollowing) "Following" else "Follow")
                     }
                     
                     OutlinedButton(
@@ -345,7 +345,7 @@ fun UserInfoCard(
                     ) {
                         Icon(Icons.Default.Chat, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("发消息")
+                        Text("Message")
                     }
                 }
             }
@@ -422,7 +422,7 @@ fun UserPostItem(
             Spacer(modifier = Modifier.height(8.dp))
             
             Text(
-                text = post.createTime ?: "刚刚",
+                text = post.createTime ?: "Just now",
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

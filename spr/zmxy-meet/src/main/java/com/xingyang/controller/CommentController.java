@@ -17,15 +17,15 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
 public class CommentController {
-    
+
     private final CommentService commentService;
     private final UserService userService;
-    
+
     public CommentController(CommentService commentService, UserService userService) {
         this.commentService = commentService;
         this.userService = userService;
     }
-    
+
     /**
      * 获取帖子的所有评论
      */
@@ -33,7 +33,7 @@ public class CommentController {
     public Result<List<Map<String, Object>>> getPostComments(@PathVariable Long postId) {
         try {
             List<Comment> comments = commentService.getPostComments(postId);
-            
+
             // 构建评论树结构
             Map<Long, Map<String, Object>> commentMap = new HashMap<>();
             List<Map<String, Object>> topComments = comments.stream()
@@ -44,7 +44,7 @@ public class CommentController {
                         return map;
                     })
                     .collect(Collectors.toList());
-            
+
             // 添加回复
             comments.stream()
                     .filter(c -> c.getParentCommentId() != null)
@@ -57,14 +57,14 @@ public class CommentController {
                             parentMap.put("replyCount", replies.size());
                         }
                     });
-            
+
             return Result.success(topComments);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.error("获取评论失败: " + e.getMessage());
         }
     }
-    
+
     /**
      * 发布评论
      */
@@ -77,27 +77,27 @@ public class CommentController {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             Long userId = Long.parseLong(auth.getName());
             User user = userService.getById(userId);
-            
+
             if (user == null) {
                 return Result.error("用户未登录");
             }
-            
+
             String content = request.get("content");
             if (content == null || content.trim().isEmpty()) {
                 return Result.error("评论内容不能为空");
             }
-            
+
             Comment comment = commentService.addComment(postId, user.getId(), content);
             Map<String, Object> result = buildCommentMap(comment);
             result.put("username", user.getUsername());
-            
+
             return Result.success(result);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.error("发布评论失败: " + e.getMessage());
         }
     }
-    
+
     /**
      * 回复评论
      */
@@ -110,27 +110,54 @@ public class CommentController {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             Long userId = Long.parseLong(auth.getName());
             User user = userService.getById(userId);
-            
+
             if (user == null) {
                 return Result.error("用户未登录");
             }
-            
+
             String content = request.get("content");
             if (content == null || content.trim().isEmpty()) {
                 return Result.error("回复内容不能为空");
             }
-            
+
             Comment comment = commentService.replyComment(commentId, user.getId(), content);
             Map<String, Object> result = buildCommentMap(comment);
             result.put("username", user.getUsername());
-            
+
             return Result.success(result);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.error("回复评论失败: " + e.getMessage());
         }
     }
-    
+
+    /**
+     * 删除评论
+     */
+    @DeleteMapping("/comments/{commentId}")
+    public Result<Void> deleteComment(@PathVariable Long commentId) {
+        try {
+            // 获取当前用户ID
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            Long userId = Long.parseLong(auth.getName());
+            User user = userService.getById(userId);
+
+            if (user == null) {
+                return Result.error("用户未登录");
+            }
+
+            boolean success = commentService.deleteComment(commentId, user.getId());
+            if (success) {
+                return Result.success(null);
+            } else {
+                return Result.error("删除评论失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error("删除评论失败: " + e.getMessage());
+        }
+    }
+
     /**
      * 构建评论Map
      */
@@ -144,7 +171,7 @@ public class CommentController {
         map.put("createTime", comment.getCreateTime());
         map.put("replies", new java.util.ArrayList<>());
         map.put("replyCount", 0);
-        
+
         // 获取用户名
         try {
             User user = userService.getById(comment.getUserId());
@@ -154,7 +181,7 @@ public class CommentController {
         } catch (Exception e) {
             map.put("username", "未知用户");
         }
-        
+
         return map;
     }
 }
