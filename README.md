@@ -1,4 +1,4 @@
-# Campus Social Platform 🎓
+# ComectME 🎓
 
 A modern social networking platform designed for campus communities, featuring real-time messaging, post sharing, and social circles.
 
