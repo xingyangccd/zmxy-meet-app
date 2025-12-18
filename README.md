@@ -271,7 +271,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Authors
 
-- **희건춘 배민웅 비희택 향원원** - [YourGitHub](git@github.com:xingyangccd/zmxy-meet-app.git)](https://github.com/xingyangccd/zmxy-meet-app)
+- **희건춘 배민웅 비희택 향원원** - (git@github.com:xingyangccd/zmxy-meet-app.git)](https://github.com/xingyangccd/zmxy-meet-app)
 
 ## 🙏 Acknowledgments
 
