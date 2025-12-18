@@ -1,4 +1,4 @@
-# Campus Social Platform 🎓
+# ComectME 🎓
 
 A modern social networking platform designed for campus communities, featuring real-time messaging, post sharing, and social circles.
 
@@ -15,7 +15,7 @@ A modern social networking platform designed for campus communities, featuring r
   - Coil (Image Loading)
   - Koin (Dependency Injection)
   - Navigation Compose
-¬
+
 ### Backend (Spring Boot)
 - **Language**: Java
 - **Framework**: Spring Boot 3
@@ -271,7 +271,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Authors
 
-- **Your Name** - *Initial work* - [YourGitHub](git@github.com:xingyangccd/zmxy-meet-app.git)
+- **희건춘 배민웅 비희택 향원원**
 
 ## 🙏 Acknowledgments
 
