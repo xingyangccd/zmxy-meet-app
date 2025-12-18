@@ -1,4 +1,4 @@
-# ComectME 🎓
+<img width="997" height="526" alt="image" src="https://github.com/user-attachments/assets/484575cb-016c-43a9-bffb-f128e9998b5d" /># ComectME 🎓
 
 A modern social networking platform designed for campus communities, featuring real-time messaging, post sharing, and social circles.
 
@@ -271,7 +271,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Authors
 
-- **Your Name** - *Initial work* - [YourGitHub](git@github.com:xingyangccd/zmxy-meet-app.git)
+- **희건춘 배민웅 비희택 향원원** - *Initial work* - [YourGitHub](git@github.com:xingyangccd/zmxy-meet-app.git)](https://github.com/xingyangccd/zmxy-meet-app)
 
 ## 🙏 Acknowledgments
 
