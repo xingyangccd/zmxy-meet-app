@@ -4,9 +4,13 @@ A modern social networking platform designed for campus communities, featuring r
 
 ## Folder Introduction:
 Spr: springboot: backend project
+
 And: Kotlin project
+
 Video: Video
+
 Apk: The executable apk file of the project
+
 
 ## 📱 Tech Stack
 
