@@ -15,7 +15,7 @@ A modern social networking platform designed for campus communities, featuring r
   - Coil (Image Loading)
   - Koin (Dependency Injection)
   - Navigation Compose
-¬
+
 ### Backend (Spring Boot)
 - **Language**: Java
 - **Framework**: Spring Boot 3
