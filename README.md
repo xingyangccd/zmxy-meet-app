@@ -1,4 +1,4 @@
-<img width="997" height="526" alt="image" src="https://github.com/user-attachments/assets/484575cb-016c-43a9-bffb-f128e9998b5d" /># ComectME 🎓
+# ComectME 🎓
 
 A modern social networking platform designed for campus communities, featuring real-time messaging, post sharing, and social circles.
 
