@@ -263,10 +263,6 @@ cd android
 ./gradlew connectedAndroidTest
 ```
 
-## 📱 Screenshots
-
-[Add your app screenshots here]
-
 ## 🤝 Contributing
 
 1. Fork the repository
